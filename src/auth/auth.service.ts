@@ -59,6 +59,10 @@ export class AuthService {
         return true;
     }
 
+    public async refreshToken(user: User) {
+        return this.generateToken(user);
+    }
+
 
     private async generateToken(user: User) {
         const paylaod = { email: user.email, uid: user.uid, nickname: user.nickname }

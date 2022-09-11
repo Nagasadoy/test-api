@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { TagModule } from './tag/tag.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -16,7 +16,7 @@ import { TokenBlackList } from './auth/entities/token.entity';
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
-            useFactory: async (config: ConfigService) => {
+            useFactory: async (config: ConfigService): Promise<TypeOrmModuleOptions> => {
                 return {
                     type: 'postgres',
                     host: process.env.POSTGRES_HOST,
@@ -24,10 +24,10 @@ import { TokenBlackList } from './auth/entities/token.entity';
                     password: `${process.env.POSTGRESS_PASSWORD}`,
                     database: process.env.POSTGRES_DB,
                     port: Number(process.env.POSTGRESS_PORT),
-                    entities: [User, Tag, TokenBlackList],
+                    entities: ['dist/**/*entity.js'],//User, Tag, TokenBlackList
                     autoLoadEntities: true,
                     logging: true, // true, чтобы выводить запросы
-                    synchronize: true
+                    synchronize: false
                 }
             },
         }),

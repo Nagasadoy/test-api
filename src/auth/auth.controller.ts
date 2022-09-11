@@ -2,7 +2,9 @@ import { Body, Controller, Post, Res, UseGuards, UsePipes } from '@nestjs/common
 import { ApiBearerAuth, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response, response } from 'express';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { User } from 'src/user/entities/user.entity';
 import { ValidationUser } from 'src/user/pipes/validation-user.pipe';
+import { AuthUser } from 'src/user/user.decorator';
 import { Auth } from './auth.decorator';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -36,5 +38,13 @@ export class AuthController {
     @Post('logout')
     logout(@Auth() token) {
         return this.authService.logout(token);
+    }
+
+    @ApiOperation({ summary: 'Обновление токена' })
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @Post('refresh')
+    refreshToken(@AuthUser() user: User) {
+        return this.authService.refreshToken(user);
     }
 }
