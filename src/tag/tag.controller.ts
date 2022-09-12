@@ -20,13 +20,17 @@ export class TagController {
 
     @Post()
     @ApiOperation({ summary: 'Создание нового тэга' })
-    create(@Body() createTagDto: CreateTagDto, @AuthUser() user: User) {
+    @ApiCreatedResponse({
+        description: 'Новый тэг',
+        type: GetTagDto,
+    })
+    create(@Body() createTagDto: CreateTagDto, @AuthUser() user: User): Promise<GetTagDto> {
         return this.tagService.create(createTagDto, user.uid);
     }
 
     @Get()
     @ApiOperation({ summary: 'Получение всех тэгов с пагинацией' })
-    @ApiCreatedResponse({
+    @ApiOkResponse({
         description: 'Список всех тэгов',
         type: PageDto<GetTagByIdDto>,
     })
@@ -36,7 +40,11 @@ export class TagController {
 
     @Get(':id')
     @ApiOperation({ summary: 'Получение тэга по id' })
-    getById(@Param('id') id: number) {
+    @ApiOkResponse({
+        description: 'Список всех тэгов',
+        type: GetTagByIdDto,
+    })
+    getById(@Param('id') id: number): Promise<GetTagByIdDto> {
         return this.tagService.getById(id);
     }
 
@@ -56,7 +64,7 @@ export class TagController {
 
     @Delete(':id')
     @ApiOperation({ summary: 'Удаление тэга по id' })
-    delete(@Param('id') tagId: number, @AuthUser() user: User){
+    delete(@Param('id') tagId: number, @AuthUser() user: User): Promise<boolean> {
         return this.tagService.delete(user.uid, tagId);
     }
 }

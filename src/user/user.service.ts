@@ -46,11 +46,12 @@ export class UserService {
         }
 
         let existingUser = await this.findUserByEmail(updateUserDto.email);
-        if (existingUser) {
+        if (existingUser && existingUser.uid != user.uid) {
             throw new HttpException('Пользователь с таким email уже существует', HttpStatus.BAD_REQUEST);
         }
+        
         existingUser = await this.findUserByNickname(updateUserDto.nickname);
-        if (existingUser) {
+        if (existingUser && existingUser.uid != user.uid) { 
             throw new HttpException('Пользователь с таким nickname уже существует', HttpStatus.BAD_REQUEST);
         }
 

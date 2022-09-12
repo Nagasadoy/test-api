@@ -8,6 +8,7 @@ import { AuthUser } from 'src/user/user.decorator';
 import { Auth } from './auth.decorator';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
+import { TokenDto } from './dto/token.dto';
 import { JwtAuthGuard } from './jwt-suth.guard';
 
 @ApiTags('Авторизация/регистрация')
@@ -15,35 +16,39 @@ import { JwtAuthGuard } from './jwt-suth.guard';
 export class AuthController {
     constructor(private readonly authService: AuthService) { }
 
+    @Post('signin')
     @UsePipes(ValidationUser)
     @ApiOperation({ summary: 'Регистрация' })
     @ApiCreatedResponse({
         description: 'Пользователь зарегистрирован',
-        type: CreateUserDto,
+        type: TokenDto,
     })
-    @Post('signin')
     signin(@Body() createUserDto: CreateUserDto) {
         return this.authService.signin(createUserDto);
     }
 
-    @ApiOperation({ summary: 'Авторизация' })
     @Post('login')
+    @ApiOperation({ summary: 'Авторизация' })
+    @ApiCreatedResponse({
+        description: 'Пользователь авторизован',
+        type: TokenDto,
+    })
     login(@Body() loginDto: LoginDto) {
         return this.authService.login(loginDto);
     }
 
+    @Post('logout')
     @ApiOperation({ summary: 'Выход' })
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
-    @Post('logout')
     logout(@Auth() token) {
         return this.authService.logout(token);
     }
 
+    @Post('refresh')
     @ApiOperation({ summary: 'Обновление токена' })
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
-    @Post('refresh')
     refreshToken(@AuthUser() user: User) {
         return this.authService.refreshToken(user);
     }

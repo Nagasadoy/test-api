@@ -64,7 +64,7 @@ export class AuthService {
     }
 
 
-    private async generateToken(user: User) {
+    private async generateToken(user: User): Promise<TokenDto> {
         const paylaod = { email: user.email, uid: user.uid, nickname: user.nickname }
         const tokenLifeTime = 1800;
 
